@@ -1,4 +1,5 @@
 using api_fit.Data;
+using api_fit.Dtos.Create;
 using api_fit.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -22,16 +23,17 @@ public class DadosController : Controller
     }
     
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Dados dados)
+    public async Task<IActionResult> Post([FromBody] CreateDadosDto dados)
     {
         try
         {
-            var exist = await _repository.GetDadosPorUserId(dados.UserId);
+            var objMapeado = _mapper.Map<Dados>(dados);
+            var exist = await _repository.GetDadosPorUserId(objMapeado.UserId);
 
             if (exist != null)
                 return BadRequest("perfil já existente");
 
-            _repository.Add(dados);
+            _repository.Add(objMapeado);
 
             if (await _repository.SaveChangesAsync() == true)
             {
@@ -69,5 +71,15 @@ public class DadosController : Controller
         {
             return BadRequest("exception 500 : " + ex);
         }
+    }
+    
+    [HttpGet("dadosPorUsuarioId")]
+    [Authorize]
+    [ProducesResponseType(typeof(IEnumerable<Dados>), 200)]
+    public async Task<ActionResult<IEnumerable<Dados>>> GetDadosPorUsuarioId(int userId)
+    {
+        var usuarios = await _repository.GetDadosPorUserId(userId);
+
+        return Ok(usuarios);
     }
 }

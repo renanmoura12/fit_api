@@ -1,12 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-using Microsoft.IdentityModel.Tokens;
+namespace api_fit.Dtos.Create;
 
-namespace api_fit.Models;
-
-public class Dados
+public class CreateDadosDto
 {
-    [Key]
-    public int Id { get; set; }
     public int TipoUsuario { get; set; }
 
     public DateTime? Nascimento { get; set; }
@@ -34,12 +29,6 @@ public class Dados
     public string? Matricula { get; set; }
     public string? Restricoes { get; set; }
 
-    public DateTime CriadoEm { get; set; }
-    public DateTime? EditadoEm { get; set; }
-
     public int UserId { get; set; }
-    public Usuario? Usuario { get; set; } 
     public int? ProfessorId { get; set; }
-    
-    
 }
