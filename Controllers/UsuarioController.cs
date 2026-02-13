@@ -34,7 +34,6 @@ namespace api_fit.Controllers
 
         [HttpPost("register")]
         [ProducesResponseType(typeof(TokenResponse), 200)]
-        [Authorize]
         public async Task<ActionResult<TokenResponse>> IncluiNovoUsuario(UsuarioDTO usuariodto)
         {
             var emailExiste = await _repository.UsuarioExisteAsync(usuariodto.Email);
