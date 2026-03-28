@@ -9,5 +9,6 @@ namespace api_fit.Response
         public string Email { get; set; }
 
         public DadosResponse? Dados { get; set; }
+        public List<Vo2>? Vo2 { get; set; }
     }
 }

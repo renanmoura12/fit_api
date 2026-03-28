@@ -11,6 +11,7 @@ namespace api_fit.Data
         public DbSet<Dados> Dados { get; set; }
         public DbSet<Exercicio> Exercicio { get; set; }
         public DbSet<Treino> Treino { get; set; }
+        public DbSet<Vo2> Vo2 { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -20,8 +21,13 @@ namespace api_fit.Data
                 .WithOne(d => d.Usuario)
                 .HasForeignKey<Dados>(d => d.UserId).IsRequired(false);
             
+            builder.Entity<Usuario>()
+                .HasMany(u => u.Vo2)
+                .WithOne(v => v.Usuario)
+                .HasForeignKey(v => v.UsuarioId)
+                .IsRequired(false);
+            
             builder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
         }
-
     }
 }

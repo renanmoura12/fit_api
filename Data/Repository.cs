@@ -95,6 +95,7 @@ namespace api_fit.Data
         {
             var usuario = await Context.Usuarios
                 .Include(a => a.Dados)
+                .Include(a => a.Vo2)
                 .AsNoTracking()
                 .Where(a => a.Email.ToLower() == email.ToLower())
                 .FirstOrDefaultAsync();
@@ -111,6 +112,7 @@ namespace api_fit.Data
             var query = Context.Usuarios
                 .AsNoTracking()
                 .Include(a => a.Dados)
+                .Include(a => a.Vo2)
                 .Where(a => a.Dados.TipoUsuario.Equals(1))
                 .AsQueryable();
 
@@ -126,6 +128,8 @@ namespace api_fit.Data
 
             return (total, result);
         }
+        
+        
 
         public async Task<(int total, IEnumerable<Treino> treinos)> GetTreinosPorMesAluno(int alunoId, int page,
             int size, string month)

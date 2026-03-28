@@ -12,6 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using api_fit.Dtos.Create;
 
 namespace api_fit.Controllers
 {
@@ -174,7 +175,8 @@ namespace api_fit.Controllers
                 UsuarioId = usuario.Id,
                 Nome = usuario.Nome,
                 Token = token,
-                Dados = usuario?.Dados
+                Dados = usuario?.Dados,
+                Vo2 = usuario.Vo2
             };
         }
 
@@ -189,5 +191,20 @@ namespace api_fit.Controllers
         }
 
 
+        [HttpPost("CreateVo2")]
+        [ProducesResponseType(typeof(TokenResponse), 200)]
+        public async Task<ActionResult<TokenResponse>> CreateVo2(CreateVo2 vo2Dto)
+        {
+            var velocidade = vo2Dto.Distancia / vo2Dto.Tempo; // m/min
+            var vo2Calculado = (velocidade * 0.2f) + 3.5f;
+
+            var mapperObject = _mapper.Map<Vo2>(vo2Dto);
+            mapperObject.Resultado = vo2Calculado;
+
+            _repository.Add(mapperObject);
+            await _repository.SaveChangesAsync();
+
+            return Ok(mapperObject);
+        }
     }
 }

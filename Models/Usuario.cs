@@ -13,6 +13,7 @@ namespace api_fit.Models
         public byte[] PasswordSalt { get; private set; }
         
         public Dados? Dados { get; set; }
+        public List<Vo2>? Vo2 { get; set; }
 
         public Usuario(string nome, string email)
         {

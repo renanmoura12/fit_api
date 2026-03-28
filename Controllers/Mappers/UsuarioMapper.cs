@@ -14,6 +14,7 @@ namespace api_fit.Controllers.Mappers
             CreateMap<Usuario, UsuarioResponse>().ReverseMap();
             CreateMap<DadosResponse, Dados>().ReverseMap();
             CreateMap<CreateDadosDto, Dados>().ReverseMap();
+            CreateMap<Vo2, CreateVo2>().ReverseMap();
         }
     }
 }
