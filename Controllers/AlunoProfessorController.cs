@@ -10,12 +10,12 @@ namespace api_fit.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class AlunoController : Controller
+public class AlunoProfessorController : Controller
 {
     private readonly IRepository _repository;
     private readonly IMapper _mapper;
 
-    public AlunoController(IRepository repository, IMapper mapper)
+    public AlunoProfessorController(IRepository repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
