@@ -107,13 +107,13 @@ namespace api_fit.Data
         }
 
         //tipo 1 aluno, tipo 2 professor
-        public async Task<(int total, IEnumerable<Usuario> alunos)> GetAlunos(int? professorId, int page, int size, string? search)
+        public async Task<(int total, IEnumerable<Usuario> alunoProfessor)> GetAlunoProfessor(int? professorId, int page, int size, string? search, int tipo)
         {
             var query = Context.Usuarios
                 .AsNoTracking()
                 .Include(a => a.Dados)
                 .Include(a => a.Vo2)
-                .Where(a => a.Dados.TipoUsuario.Equals(1))
+                .Where(a => a.Dados.TipoUsuario.Equals(tipo))
                 .AsQueryable();
 
             if (professorId != null)

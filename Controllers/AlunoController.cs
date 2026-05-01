@@ -21,12 +21,14 @@ public class AlunoController : Controller
         _mapper = mapper;
     }
     
+    //quando é aluno pode passar o professorId e tipo 1
+    //quando é para buscar todos os professores passa o tipo 2
     [HttpGet]
-    public async Task<ActionResult<AlunoResponse>> GetAlunoPorProfessorId(int page, int size, int? professorId, string? search)
+    public async Task<ActionResult<AlunoResponse>> GetAlunoProfessor(int page, int size, int? professorId, string? search, int tipo)
     {
         try
         {
-            var (total, alunos) = await _repository.GetAlunos(professorId, page, size, search);
+            var (total, alunos) = await _repository.GetAlunoProfessor(professorId, page, size, search, tipo);
 
             if (alunos == null)
             {

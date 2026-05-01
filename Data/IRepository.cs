@@ -20,7 +20,7 @@ namespace api_fit.Data
         Task<UsuarioResponse> GetUsuarioByIdAsync(int id);
         Task<UsuarioResponse> GetUsuarioByEmailAsync(string email);
         Task<IEnumerable<UsuarioResponse>> GetTodosUsuariosAsync();
-        Task<(int total, IEnumerable<Usuario> alunos)> GetAlunos(int? professorId, int page, int size, string? search);
+        Task<(int total, IEnumerable<Usuario> alunoProfessor)> GetAlunoProfessor(int? professorId, int page, int size, string? search, int tipo);
 
         Task<(int total, IEnumerable<Treino> treinos)> GetTreinosPorMesAluno(int alunoId, int page, int size, string month);
         Task<Treino> GetTreinoPorId(int treinoId);
