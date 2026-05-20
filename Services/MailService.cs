@@ -42,6 +42,7 @@ namespace api_fit.Services
                     smtp.EnableSsl = true;
                     smtp.UseDefaultCredentials = false;
                     smtp.Credentials = new NetworkCredential(_mailSettings.Mail, _mailSettings.Password);
+                    smtp.Timeout = 15000;
 
                     await smtp.SendMailAsync(mailMessage);
                 }

@@ -57,17 +57,6 @@ namespace api_fit.Controllers
 
             var token = TokenService.GenerateToken(_configuration, usuariodto.Nome, usuariodto.Email);
 
-            string link = "https://ipesq.netlify.app/definir-senha?token=" + token;
-
-            EmailDto email = new()
-            {
-                ToEmail = usuariodto.Email,
-                Subject = "Cadastre sua senha",
-                Body = $@"<html><body>Clique no link para definir sua senha:<br/><br/><a href=""{link}"">{link}</a></body></html>"
-            };
-
-            await _mailService.SendEmailAsync(email);
-
             TokenResponse userToken = new()
             {
                 UsuarioId = objmapeado.Id,
@@ -144,7 +133,7 @@ namespace api_fit.Controllers
                 Body = $@"<html><body>Clique no link abaixo para redefinir sua senha:<br/><br/><a href=""{link}"">{link}</a></body></html>"
             };
 
-            await _mailService.SendEmailAsync(corpoEmail);
+            _ = _mailService.SendEmailAsync(corpoEmail);
 
             return Ok("Email enviado com sucesso");
         }
