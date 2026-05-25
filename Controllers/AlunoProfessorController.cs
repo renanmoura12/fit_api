@@ -1,15 +1,12 @@
 using api_fit.Data;
-using api_fit.Models;
 using api_fit.Response;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api_fit.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public class AlunoProfessorController : Controller
 {
     private readonly IRepository _repository;
