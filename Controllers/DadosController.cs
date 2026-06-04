@@ -85,11 +85,11 @@ public class DadosController : Controller
 
     [HttpPut("atualizarProfessor")]
     [Authorize]
-    public async Task<IActionResult> AtualizarProfessor(int dadosId, int professorId)
+    public async Task<IActionResult> AtualizarProfessor(int userId, int professorId)
     {
         try
         {
-            var dados = await _repository.GetDadosPorId(dadosId);
+            var dados = await _repository.GetDadosPorUserId(userId);
             if (dados == null)
                 return NotFound("Dados não encontrado");
 
