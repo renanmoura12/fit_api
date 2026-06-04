@@ -46,44 +46,71 @@ public class TreinoController : Controller
         }
     }
     
-    [HttpPut]
-    public async Task<IActionResult> Put([FromBody] Treino treino)
+[HttpPut]
+public async Task<IActionResult> Put([FromBody] Treino treino)
+{
+    try
     {
-        try
+        var exist = await _repository.GetTreinoPorId(treino.Id);
+
+        if (exist == null)
+            return NotFound("Treino não encontrado");
+
+        // Atualiza os dados do treino
+        _mapper.Map(treino, exist);
+        exist.EditadoEm = DateTime.UtcNow;
+
+        var idsRecebidos = treino.Exercicios
+            .Where(x => x.Id > 0)
+            .Select(x => x.Id)
+            .ToHashSet();
+
+        // Remove exercícios que estão no banco mas não vieram no payload
+        var exerciciosRemover = exist.Exercicios
+            .Where(x => !idsRecebidos.Contains(x.Id))
+            .ToList();
+
+        foreach (var ex in exerciciosRemover)
         {
-            var exist = await _repository.GetTreinoPorId(treino.Id);
-
-            // Remove os exercícios antigos
-            if (exist.Exercicios != null && exist.Exercicios.Count > 0)
-            {
-                foreach (var exercicio in exist.Exercicios)
-                {
-                    _repository.Delete(exercicio);
-                }
-                // Salva a exclusão dos exercícios
-                await _repository.SaveChangesAsync();
-            }
-
-            var objMapeado = _mapper.Map(treino, exist);
-            objMapeado.EditadoEm = DateTime.UtcNow;
-
-            // Adiciona apenas os novos exercícios recebidos no body
-            objMapeado.Exercicios = treino.Exercicios;
-
-            _repository.Update(objMapeado);
-
-            if (await _repository.SaveChangesAsync() == true)
-            {
-                return Ok("treino atualizado");
-            }
-
-            return BadRequest("Problema ao se comunicar com o banco");
+            _repository.Delete(ex);
         }
-        catch (System.Exception ex)
+
+        // Atualiza exercícios existentes
+        foreach (var exPayload in treino.Exercicios.Where(x => x.Id > 0))
         {
-            return BadRequest("exception 500 : " + ex);
+            var exBanco = exist.Exercicios
+                .FirstOrDefault(x => x.Id == exPayload.Id);
+
+            if (exBanco != null)
+            {
+                _mapper.Map(exPayload, exBanco);
+                exBanco.EditadoEm = DateTime.UtcNow;
+            }
         }
+
+        // Adiciona exercícios novos (Id = 0)
+        foreach (var exNovo in treino.Exercicios.Where(x => x.Id == 0))
+        {
+            exNovo.TreinoId = exist.Id;
+            exNovo.CriadoEm = DateTime.UtcNow;
+
+            exist.Exercicios.Add(exNovo);
+        }
+
+        _repository.Update(exist);
+
+        if (await _repository.SaveChangesAsync())
+        {
+            return Ok("treino atualizado");
+        }
+
+        return BadRequest("Problema ao se comunicar com o banco");
     }
+    catch (Exception ex)
+    {
+        return BadRequest("exception 500 : " + ex);
+    }
+}
     
     [HttpGet]
     public async Task<ActionResult<TreinoResponse>> GetTreino(int page, int size, int alunoId, string month)
