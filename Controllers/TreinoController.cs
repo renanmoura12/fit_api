@@ -60,12 +60,14 @@ public class TreinoController : Controller
                 {
                     _repository.Delete(exercicio);
                 }
+                // Salva a exclusão dos exercícios
+                await _repository.SaveChangesAsync();
             }
 
             var objMapeado = _mapper.Map(treino, exist);
             objMapeado.EditadoEm = DateTime.UtcNow;
 
-            // Adiciona os novos exercícios
+            // Adiciona apenas os novos exercícios recebidos no body
             objMapeado.Exercicios = treino.Exercicios;
 
             _repository.Update(objMapeado);
