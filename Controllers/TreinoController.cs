@@ -53,8 +53,20 @@ public class TreinoController : Controller
         {
             var exist = await _repository.GetTreinoPorId(treino.Id);
 
+            // Remove os exercícios antigos
+            if (exist.Exercicios != null && exist.Exercicios.Count > 0)
+            {
+                foreach (var exercicio in exist.Exercicios)
+                {
+                    _repository.Delete(exercicio);
+                }
+            }
+
             var objMapeado = _mapper.Map(treino, exist);
             objMapeado.EditadoEm = DateTime.UtcNow;
+
+            // Adiciona os novos exercícios
+            objMapeado.Exercicios = treino.Exercicios;
 
             _repository.Update(objMapeado);
 
@@ -97,4 +109,27 @@ public class TreinoController : Controller
             return BadRequest("exception 500 : " + ex);
         }
     }
+    [HttpPut("finalizaTreino")]
+    public async Task<IActionResult> FinalizaTreino(int treinoId, String observacoes)
+    {
+        try 
+        {
+            var treino = await _repository.GetTreinoPorId(treinoId);
+            treino.Situacao = true;
+            treino.Observacoes = observacoes;
+
+            _repository.Update(treino);
+
+            if (await _repository.SaveChangesAsync() == true)
+            {
+                return Ok("treino finalizado");
+            }           
+            return BadRequest("Problema ao se comunicar com o banco");
+        }
+        catch (System.Exception ex)
+        {
+            return BadRequest("exception 500 : " + ex);
+        }
+    }
+        
 }

@@ -82,4 +82,31 @@ public class DadosController : Controller
 
         return Ok(usuarios);
     }
+
+    [HttpPut("atualizarProfessor")]
+    [Authorize]
+    public async Task<IActionResult> AtualizarProfessor(int dadosId, int professorId)
+    {
+        try
+        {
+            var dados = await _repository.GetDadosPorId(dadosId);
+            if (dados == null)
+                return NotFound("Dados não encontrado");
+
+            dados.ProfessorId = professorId;
+
+            _repository.Update(dados);  
+        
+            if (await _repository.SaveChangesAsync() == true)
+            {
+                return Ok("Professor atualizado com sucesso");
+                }
+
+            return BadRequest("Problema ao se comunicar com o banco");
+        }
+        catch (System.Exception ex)
+        {
+            return BadRequest("exception 500 : " + ex);
+        }
+    }
 }
