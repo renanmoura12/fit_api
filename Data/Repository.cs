@@ -161,6 +161,13 @@ namespace api_fit.Data
         {
             return await Context.Treino.AsNoTracking().Where(a => a.Id == treinoId).FirstOrDefaultAsync();
         }
+        public async Task<Treino> GetTreinoPorIdParaEdicao(int treinoId)
+        {
+            
+            return await Context.Treino
+                .Include(a => a.Exercicios)
+                .FirstOrDefaultAsync(a => a.Id == treinoId);
+        }
         
         public async Task<Treino> GetTreinoPorData(DateTime data)
         {
