@@ -51,7 +51,7 @@ public async Task<IActionResult> Put([FromBody] Treino treino)
 {
     try
     {
-        var exist = await _repository.GetTreinoPorId(treino.Id);
+        var exist = await _repository.GetTreinoPorIdParaEdicao(treino.Id);
 
         if (exist == null)
             return NotFound("Treino não encontrado");
