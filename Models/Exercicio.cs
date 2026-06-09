@@ -12,6 +12,8 @@ public class Exercicio
     public string? Distancia { get; set; }
     public string? Pausa { get; set; }
     public int TreinoId { get; set; }
+    public decimal? TempoCorrer { get; set; }
+    public decimal? TempoCaminhar { get; set; }
     public DateTime CriadoEm { get; set; }
     public DateTime? EditadoEm { get; set; }
 }
