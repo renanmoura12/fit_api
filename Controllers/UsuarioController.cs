@@ -184,7 +184,7 @@ namespace api_fit.Controllers
         [ProducesResponseType(typeof(TokenResponse), 200)]
         public async Task<ActionResult<TokenResponse>> CreateVo2(CreateVo2 vo2Dto)
         {
-            var velocidade = vo2Dto.Distancia / vo2Dto.Tempo; // m/min
+            var velocidade = vo2Dto.Distancia / float.Parse(vo2Dto.Tempo); // m/min
             var vo2Calculado = (velocidade * 0.2f) + 3.5f;
 
             var mapperObject = _mapper.Map<Vo2>(vo2Dto);
