@@ -67,6 +67,7 @@ public async Task<IActionResult> Put([FromBody] Treino treino)
         exist.Data = treino.Data;
         exist.Situacao = treino.Situacao;
         exist.Observacoes = treino.Observacoes;
+        exist.ObsTreinador = treino.ObsTreinador;
         exist.UserId = treino.UserId; 
         exist.EditadoEm = DateTime.UtcNow;
 
