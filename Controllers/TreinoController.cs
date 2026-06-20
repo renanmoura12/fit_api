@@ -99,7 +99,8 @@ public async Task<IActionResult> Put([FromBody] Treino treino)
                 exBanco.Repeticao = exPayload.Repeticao;
                 exBanco.Distancia = exPayload.Distancia;
                 exBanco.Pausa = exPayload.Pausa;
-                
+                exBanco.TempoCorrer = exPayload.TempoCorrer;
+                exBanco.TempoCaminhar = exPayload.TempoCaminhar;
                 exBanco.TreinoId = exist.Id; 
                 exBanco.EditadoEm = DateTime.UtcNow;
 
