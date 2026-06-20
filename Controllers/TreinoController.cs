@@ -45,20 +45,29 @@ public class TreinoController : Controller
             return BadRequest("exception 500 : " + ex);
         }
     }
- [HttpPut]
+[HttpPut]
 public async Task<IActionResult> Put([FromBody] Treino treino)
 {
     try
     {
+        
+        if (treino == null)
+            return BadRequest("Payload de treino inválido ou não enviado.");
+
+        
+        treino.Exercicios ??= new List<Exercicio>();
+
+       
         var exist = await _repository.GetTreinoPorIdParaEdicao(treino.Id);
 
         if (exist == null)
-            return NotFound("Treino não encontrado");
+            return NotFound("Treino não encontrado.");
 
-      
+        
         exist.Data = treino.Data;
         exist.Situacao = treino.Situacao;
         exist.Observacoes = treino.Observacoes;
+        exist.UserId = treino.UserId; 
         exist.EditadoEm = DateTime.UtcNow;
 
         var idsRecebidos = treino.Exercicios
@@ -66,7 +75,7 @@ public async Task<IActionResult> Put([FromBody] Treino treino)
             .Select(x => x.Id)
             .ToHashSet();
 
-        
+      
         var exerciciosRemover = exist.Exercicios
             .Where(x => !idsRecebidos.Contains(x.Id))
             .ToList();
@@ -76,7 +85,7 @@ public async Task<IActionResult> Put([FromBody] Treino treino)
             _repository.Delete(ex);
         }
 
-        
+   
         foreach (var exPayload in treino.Exercicios.Where(x => x.Id > 0))
         {
             var exBanco = exist.Exercicios
@@ -84,18 +93,21 @@ public async Task<IActionResult> Put([FromBody] Treino treino)
 
             if (exBanco != null)
             {
-            
-                _mapper.Map(exPayload, exBanco);
                 
-             
+                exBanco.Tempo = exPayload.Tempo;
+                exBanco.Detalhe = exPayload.Detalhe;
+                exBanco.Repeticao = exPayload.Repeticao;
+                exBanco.Distancia = exPayload.Distancia;
+                exBanco.Pausa = exPayload.Pausa;
+                
                 exBanco.TreinoId = exist.Id; 
                 exBanco.EditadoEm = DateTime.UtcNow;
 
+              
                 _repository.Update(exBanco); 
             }
         }
 
-        
         foreach (var exNovo in treino.Exercicios.Where(x => x.Id == 0))
         {
             exNovo.TreinoId = exist.Id;
@@ -104,18 +116,20 @@ public async Task<IActionResult> Put([FromBody] Treino treino)
             exist.Exercicios.Add(exNovo);
         }
 
+      
         _repository.Update(exist);
 
         if (await _repository.SaveChangesAsync())
         {
-            return Ok("Treino atualizado");
+            return Ok("Treino atualizado com sucesso.");
         }
 
-        return BadRequest("Problema ao se comunicar com o banco");
+       
+        return Ok("Treino processado (nenhuma alteração pendente para salvar).");
     }
     catch (Exception ex)
     {
-        // Dica: Retorne ex.Message para não expor a stack trace inteira para o client
+        // Retorna status 500 informando o erro
         return StatusCode(500, "Erro interno do servidor: " + ex.Message); 
     }
 }
