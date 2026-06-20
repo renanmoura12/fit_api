@@ -167,7 +167,7 @@ public async Task<IActionResult> Put([FromBody] Treino treino)
         try 
         {
             var treino = await _repository.GetTreinoPorId(treinoId);
-            treino.Situacao = true;
+            treino.Finalizado = true;
             treino.Observacoes = observacoes;
 
             _repository.Update(treino);
