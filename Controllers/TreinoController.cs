@@ -45,8 +45,7 @@ public class TreinoController : Controller
             return BadRequest("exception 500 : " + ex);
         }
     }
-    
-[HttpPut]
+ [HttpPut]
 public async Task<IActionResult> Put([FromBody] Treino treino)
 {
     try
@@ -56,8 +55,10 @@ public async Task<IActionResult> Put([FromBody] Treino treino)
         if (exist == null)
             return NotFound("Treino não encontrado");
 
-        // Atualiza os dados do treino
-        _mapper.Map(treino, exist);
+      
+        exist.Data = treino.Data;
+        exist.Situacao = treino.Situacao;
+        exist.Observacoes = treino.Observacoes;
         exist.EditadoEm = DateTime.UtcNow;
 
         var idsRecebidos = treino.Exercicios
@@ -65,7 +66,7 @@ public async Task<IActionResult> Put([FromBody] Treino treino)
             .Select(x => x.Id)
             .ToHashSet();
 
-        // Remove exercícios que estão no banco mas não vieram no payload
+        
         var exerciciosRemover = exist.Exercicios
             .Where(x => !idsRecebidos.Contains(x.Id))
             .ToList();
@@ -75,7 +76,7 @@ public async Task<IActionResult> Put([FromBody] Treino treino)
             _repository.Delete(ex);
         }
 
-        // Atualiza exercícios existentes
+        
         foreach (var exPayload in treino.Exercicios.Where(x => x.Id > 0))
         {
             var exBanco = exist.Exercicios
@@ -83,12 +84,18 @@ public async Task<IActionResult> Put([FromBody] Treino treino)
 
             if (exBanco != null)
             {
+            
                 _mapper.Map(exPayload, exBanco);
+                
+             
+                exBanco.TreinoId = exist.Id; 
                 exBanco.EditadoEm = DateTime.UtcNow;
+
+                _repository.Update(exBanco); 
             }
         }
 
-        // Adiciona exercícios novos (Id = 0)
+        
         foreach (var exNovo in treino.Exercicios.Where(x => x.Id == 0))
         {
             exNovo.TreinoId = exist.Id;
@@ -101,14 +108,15 @@ public async Task<IActionResult> Put([FromBody] Treino treino)
 
         if (await _repository.SaveChangesAsync())
         {
-            return Ok("treino atualizado");
+            return Ok("Treino atualizado");
         }
 
         return BadRequest("Problema ao se comunicar com o banco");
     }
     catch (Exception ex)
     {
-        return BadRequest("exception 500 : " + ex);
+        // Dica: Retorne ex.Message para não expor a stack trace inteira para o client
+        return StatusCode(500, "Erro interno do servidor: " + ex.Message); 
     }
 }
     
