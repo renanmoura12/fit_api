@@ -24,6 +24,9 @@ namespace api_fit.Data
 
         Task<(int total, IEnumerable<Treino> treinos)> GetTreinosPorMesAluno(int alunoId, int page, int size, string month);
         Task<Treino> GetTreinoPorId(int treinoId);
+
+        Task<Treino> GetTreinoPorIdParaEdicao(int treinoId);
+
         Task<Exercicio> GetExercicioPorId(int exercicioId);
         Task<Dados> GetDadosPorId(int id);
         Task<Dados?> GetDadosPorUserId(int userId);

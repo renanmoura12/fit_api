@@ -12,6 +12,9 @@ public class Treino
     public DateTime CriadoEm { get; set; }
     public DateTime? EditadoEm { get; set; }
     public int UserId { get; set; }
+    
+    public bool? Finalizado { get; set; }
+    public string? ObsTreinador { get; set; }
 
     public List<Exercicio> Exercicios { get; set; }
 }
